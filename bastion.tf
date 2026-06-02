@@ -33,6 +33,31 @@ resource "aws_instance" "bastion" {
   subnet_id              = aws_subnet.public_1.id
   key_name               = aws_key_pair.bastion.key_name
   vpc_security_group_ids = [aws_security_group.bastion.id]
+  iam_instance_profile = aws_iam_instance_profile.bastion_ssm.name
 
   tags = { Name = "bastion-host" }
+}
+resource "aws_iam_role" "bastion_ssm" {
+  name = "bastion-ssm-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "bastion_ssm" {
+  role       = aws_iam_role.bastion_ssm.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "bastion_ssm" {
+  name = "bastion-ssm-profile"
+  role = aws_iam_role.bastion_ssm.name
 }
