@@ -61,3 +61,7 @@ resource "aws_iam_instance_profile" "bastion_ssm" {
   name = "bastion-ssm-profile"
   role = aws_iam_role.bastion_ssm.name
 }
+resource "aws_iam_role_policy_attachment" "bastion_eks" {
+  role       = aws_iam_role.bastion_ssm.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
