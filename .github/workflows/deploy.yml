@@ -26,7 +26,7 @@ jobs:
 
     - name: Build Image
       run: |
-        docker build -t demo-app:${{ github.sha }} .
+        docker build -t demo-app:${{ github.sha }} ./demo-app
 
     - name: Tag Image
       run: |
